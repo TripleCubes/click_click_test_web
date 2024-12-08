@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>click click test</title>
+
+	<style>
+		body {
+			margin: 0px;
+			padding: 0px;
+			overflow: hidden;
+		}
+
+		#canvas {
+			width: 100vw;
+			height: 100vh;
+		}
+
+		input {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<input type="file" accept=".clikt"></input>
+
+	<script>
+		var Module = {
+			canvas: document.querySelector('#canvas'),
+		};
+
+		let canvas = document.querySelector('#canvas');
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+	
+		window.addEventListener('resize', (e) => {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		});
+
+		document.onkeydown = (e) => {
+			return false;
+		}
+
+
+		let file_input = document.querySelector('input');
+		let file_picked = 0;
+
+		file_input.addEventListener('change', async function() {
+			if (file_input.files.length == 0) {
+				return;
+			}
+
+			let file = file_input.files[0];
+			let str = await file.text();
+			FS.writeFile('./data/' + file.name, str);
+			FS.syncfs(function(err) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					file_picked = 1;
+				}
+			});
+		});
+
+
+		const KEY_FIRST_RAN_NOTICE_OKAYED = "first_ran_notice_okayed"
+		if (localStorage.getItem(KEY_FIRST_RAN_NOTICE_OKAYED) == null) {
+			localStorage.setItem(KEY_FIRST_RAN_NOTICE_OKAYED, "0");
+		}
+
+		function set_first_ran_notice_okay() {
+			localStorage.setItem(KEY_FIRST_RAN_NOTICE_OKAYED, "1");
+		}
+
+		function first_ran_notice_okayed() {
+			if (localStorage.getItem(KEY_FIRST_RAN_NOTICE_OKAYED) == "1") {
+				return 1;
+			}
+			else {
+				return 0;
+			}
+		}
+	</script>
+
+	<script src="clickclick.js"></script>
+</body>
+</html>
